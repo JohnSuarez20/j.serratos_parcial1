@@ -1,42 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoginForm from './components/LoginForm';
 import RobotList from './components/RobotList';
 import RobotDetail from './components/RobotDetail';
 import Header from './components/Header';
 import { Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import robot1 from './images/robot1.jpeg';
-import robot2 from './images/robot2.jpeg';
+import { useTranslation } from 'react-i18next';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [robots] = useState([
-    {
-      nombre: 'Robot1',
-      modelo: 'R1000',
-      fabricante: 'RobotCocina',
-      imagen: robot1,
-      anio: 2020,
-      capacidad: '1.8 GHz',
-      humor: 'Serio y servicial'
-    },
-    {
-      nombre: 'Robot2',
-      modelo: 'R2000',
-      fabricante: 'RoboticoCorp',
-      imagen: robot2,
-      anio: 2018,
-      capacidad: '1.6 GHz',
-      humor: 'Alegre y jugueton'
-    }
-  ]);
+  const [robots, setRobots] = useState([]);
   const [selectedRobot, setSelectedRobot] = useState(null);
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetch('http://localhost:3001/robots')
+        .then(response => response.json())
+        .then(data => setRobots(data))
+        .catch(err => console.error('Error fetching robots:', err));
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="App">
       <Header />
-
+      <button onClick={() => changeLanguage('es')}>Español</button>
+      <button onClick={() => changeLanguage('en')}>English</button>
       <Container>
         {!isLoggedIn ? (
           <LoginForm onLogin={setIsLoggedIn} />
@@ -45,7 +40,6 @@ function App() {
             <Col md={8}>
               <RobotList robots={robots} onSelectRobot={setSelectedRobot} />
             </Col>
-
             <Col md={4}>
               <RobotDetail robot={selectedRobot} />
             </Col>

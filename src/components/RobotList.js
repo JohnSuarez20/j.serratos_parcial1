@@ -1,29 +1,33 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const RobotList = ({ robots, onSelectRobot }) => {
+  const { t } = useTranslation();
+
   return (
-    <div className="container">
-      <h2>Robots Disponibles para Adopción</h2>
-      <Table striped bordered hover responsive className="mt-3">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Modelo</th>
-            <th>Fabricante</th>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>{t('name')}</th>
+          <th>{t('model')}</th>
+          <th>{t('manufacturer')}</th>
+          <th>{t('action')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {robots.map((robot) => (
+          <tr key={robot.id} onClick={() => onSelectRobot(robot)}>
+            <td>{robot.nombre}</td>
+            <td>{robot.modelo}</td>
+            <td>{robot.empresaFabricante}</td>
+            <td>
+              <Button variant="info">{t('view_details')}</Button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {robots.map((robot, index) => (
-            <tr key={index} onClick={() => onSelectRobot(robot)} style={{ cursor: 'pointer' }}>
-              <td>{robot.nombre}</td>
-              <td>{robot.modelo}</td>
-              <td>{robot.fabricante}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+        ))}
+      </tbody>
+    </Table>
   );
 };
 
